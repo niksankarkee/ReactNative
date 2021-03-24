@@ -1,21 +1,57 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Button } from 'react-native';
+
+import AddTodo from './components/AddTodo';
+import TodoItems from './components/TodoItems';
 
 export default function App() {
+  const [isAddMode, setIsAddMode] = useState(false);
+  const [todoItemList, setTodoItemList] = useState([]);
+
+  const todoListHandler = (todoItem) => {
+    setTodoItemList((currentItem) => [
+      ...currentItem,
+      { id: Math.random().toString(), value: todoItem },
+    ]);
+    setIsAddMode(false);
+  };
+  
+  const cancleButtonHandler = () => {
+    setIsAddMode(false);
+  };
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={styles.screen}>
+      <View style={styles.addTodoButton}>
+        <Button
+          title='Add Todo'
+          color='white'
+          onPress={() => setIsAddMode(true)}
+        />
+      </View>
+      <AddTodo
+        visible={isAddMode}
+        onCancle={cancleButtonHandler}
+        addTodo={todoListHandler}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
+    padding: 50,
+    backgroundColor: '#F3D8B6',
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
+  addTodoButton: {
+    color: '#ccc',
+    backgroundColor: '#006B72',
+    width: '80%',
+    height: 50,
+    borderRadius: 20,
+    padding: 5,
   },
 });
