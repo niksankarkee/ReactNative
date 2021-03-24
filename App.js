@@ -1,37 +1,48 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Button } from 'react-native';
+import { StyleSheet, View, Button, FlatList } from 'react-native';
 
-import AddTodo from './components/AddTodo';
-import TodoItems from './components/TodoItems';
+import GoalItem from './components/GoalItem';
+import GoalInput from './components/GoalInput';
 
 export default function App() {
+  const [courseGoals, setCourseGoals] = useState([]);
   const [isAddMode, setIsAddMode] = useState(false);
-  const [todoItemList, setTodoItemList] = useState([]);
 
-  const todoListHandler = (todoItem) => {
-    setTodoItemList((currentItem) => [
-      ...currentItem,
-      { id: Math.random().toString(), value: todoItem },
+  const addGoalHandler = (goalTitle) => {
+    setCourseGoals((currentGoals) => [
+      ...currentGoals,
+      { id: Math.random().toString(), value: goalTitle },
     ]);
     setIsAddMode(false);
   };
-  
-  const cancleButtonHandler = () => {
+
+  const removeGoalHandler = (goalId) => {
+    setCourseGoals((currentGoals) => {
+      return currentGoals.filter((goal) => goal.id !== goalId);
+    });
+  };
+
+  const cancleGoalAdditionHandler = () => {
     setIsAddMode(false);
   };
+
   return (
     <View style={styles.screen}>
-      <View style={styles.addTodoButton}>
-        <Button
-          title='Add Todo'
-          color='white'
-          onPress={() => setIsAddMode(true)}
-        />
-      </View>
-      <AddTodo
+      <Button title='Add New Goal' onPress={() => setIsAddMode(true)} />
+      <GoalInput
         visible={isAddMode}
-        onCancle={cancleButtonHandler}
-        addTodo={todoListHandler}
+        onAddGoal={addGoalHandler}
+        onCancle={cancleGoalAdditionHandler}
+      />
+      <FlatList
+        keyExtractor={(item, index) => item.id}
+        data={courseGoals}
+        renderItem={(itemData) => (
+          <GoalItem
+            onDelete={removeGoalHandler.bind(this, itemData.item.id)}
+            title={itemData.item.value}
+          />
+        )}
       />
     </View>
   );
@@ -40,18 +51,5 @@ export default function App() {
 const styles = StyleSheet.create({
   screen: {
     padding: 50,
-    backgroundColor: '#F3D8B6',
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-  },
-  addTodoButton: {
-    color: '#ccc',
-    backgroundColor: '#006B72',
-    width: '80%',
-    height: 50,
-    borderRadius: 20,
-    padding: 5,
   },
 });
