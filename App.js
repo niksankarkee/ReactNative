@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Button } from 'react-native';
+import { StyleSheet, View, Button, Platform, FlatList } from 'react-native';
 
 import AddTodo from './components/AddTodo';
 import TodoItems from './components/TodoItems';
@@ -15,7 +15,6 @@ export default function App() {
     ]);
     setIsAddMode(false);
   };
-  
   const cancleButtonHandler = () => {
     setIsAddMode(false);
   };
@@ -24,7 +23,7 @@ export default function App() {
       <View style={styles.addTodoButton}>
         <Button
           title='Add Todo'
-          color='white'
+          color={Platform.OS === 'ios' ? 'white' : '#006B72'}
           onPress={() => setIsAddMode(true)}
         />
       </View>
@@ -32,6 +31,11 @@ export default function App() {
         visible={isAddMode}
         onCancle={cancleButtonHandler}
         addTodo={todoListHandler}
+      />
+      <FlatList
+        keyExtractor={(item, index) => item.id}
+        data={todoItemList}
+        renderItem={(todo) => <TodoItems title={todo.item.value} />}
       />
     </View>
   );
@@ -42,9 +46,9 @@ const styles = StyleSheet.create({
     padding: 50,
     backgroundColor: '#F3D8B6',
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   addTodoButton: {
     color: '#ccc',
